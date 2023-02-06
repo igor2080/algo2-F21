@@ -64,8 +64,12 @@ int findCommands(string line)
 }
 
 int main() {
+	cout << "Enter file name: ";
+	string fileName;
+	cin >> fileName;
+
 	//file containing the code
-	fstream codeFile("codefile3.txt", ios::in);
+	fstream codeFile(fileName, ios::in);
 	//buffer for storing lines from file
 	string codeLine = "";
 	int commandCount = 0;
@@ -75,6 +79,7 @@ int main() {
 		commandCount += findCommands(codeLine);
 	}
 
+	//close file since reading has finished
 	codeFile.close();
 
 	cout << "Total number of if/for/while commands is: " << commandCount<<endl;

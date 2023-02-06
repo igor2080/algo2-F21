@@ -1,0 +1,129 @@
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+string SumOfTwoStrings(string a, string b)
+{
+	bool firstLarger, firstNegative = false, secondNegative = false, resultIsNegative = false;
+	if (a[0] == '-')
+	{
+		firstNegative = true;
+		a.erase(0, 1);
+	}
+	if (b[0] == '-')
+	{
+		secondNegative = true;
+		b.erase(0, 1);
+	}
+
+	firstLarger = a.size() > b.size();
+
+	int zerocount = 0;
+	string zeroes = "";
+
+	if (firstLarger)
+		zerocount = a.size() - b.size();
+	else
+		zerocount = b.size() - a.size();
+
+	for (int i = 0; i < zerocount; i++)
+		zeroes += "0";
+
+	if (firstLarger)
+		b = zeroes + b;
+	else
+		a = zeroes + a;
+
+	for (int i = 0; i < a.size(); i++)
+	{
+		if (a[i] > b[i])
+		{
+			firstLarger = true;
+			break;
+		}
+		if (b[i] > a[i])
+		{
+			firstLarger = false;
+			break;
+		}
+	}
+
+	if ((firstNegative && secondNegative) || (firstLarger && firstNegative) || (!firstLarger && secondNegative))
+		resultIsNegative = true;
+
+	char digits[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
+	string sum = "";
+	int mathResult = 0;
+	int carry = 0;
+	int ldigit = 0, rdigit = 0;
+
+	if (firstNegative == secondNegative)
+	{
+		for (int i = a.size() - 1; i >= 0; i--)
+		{
+			mathResult = ((a[i] - '0') + carry + (b[i] - '0'));
+			sum = digits[mathResult % 10] + sum;
+			if (mathResult > 9)
+				carry = 1;
+		}
+	}
+	else
+	{
+		for (int i = a.size() - 1; i >= 0; i--)
+		{
+			if (firstLarger)
+			{
+				ldigit = (a[i] - '0');
+				rdigit = (b[i] - '0');
+			}
+			else
+			{
+				ldigit = (b[i] - '0');
+				rdigit = (a[i] - '0');
+			}
+
+			if (carry == 1)
+			{
+				ldigit = 10 + ldigit;
+				carry = 0;
+			}
+			else if (carry == -1)
+			{
+				ldigit--;
+				carry = 0;
+			}
+
+			if (ldigit < rdigit)
+			{
+				ldigit = 10 + ldigit;
+				carry = -1;
+			}
+
+			mathResult = ldigit - rdigit;
+			sum = digits[mathResult % 10] + sum;
+
+			if (mathResult > 9)
+				carry = 1;
+		}
+	}
+
+	if (carry == 1)
+		sum = digits[carry] + sum;
+
+	while (sum[0] == '0')
+	{
+		sum.erase(0, 1);
+	}
+
+	if (resultIsNegative)
+		sum = "-" + sum;
+
+	return sum;
+}
+
+int main() {
+	
+
+	return 0;
+}

@@ -1,0 +1,21 @@
+Igor Alyeksyeyenko, ia22016
+
+F21. Create program to read given text file containing correct C++ code. Count how many if, for and while commands are in given C++ program in input file. Program in input file does not contain comments.
+
+Assumptions: 
+- else is not an if command, 'else if' IS an if command
+- given c++ code is valid, all checks assume code is already valid c++ code
+- files are placed in the same directory as the program.
+
+
+Given input file name: codefile.txt
+
+Output: Total number of if/for/while commands is: 7
+
+Given input file name: codefile2.txt
+
+Output: Total number of if/for/while commands is: 3
+
+Given input file name: codefile3.txt
+
+Output: Total number of if/for/while commands is: 21

@@ -2,7 +2,7 @@
 #include<iostream>
 #include<string>
 #include<sstream>  
-#include<algorithm>
+#include <algorithm>
 using namespace std;
 
 /*******************************************
@@ -14,6 +14,14 @@ F21. Create program to read given text file containing correct C++ code. Count h
 Program created: 2023/02/06
 
 *******************************************/
+
+//avoiding magic numbers for specifying commands in an array
+enum CommandType
+{
+	command_if = 0,
+	command_for = 1,
+	command_while = 2
+};
 
 //trim empty spaces(and tabs) from the beginning of a string
 string trimStart(string s)
@@ -27,11 +35,10 @@ string trimStart(string s)
 }
 
 //find the amount of commands(if/while/for) exist in a given string
-//returns how many of them were found
-int findCommands(string line)
+//returns how many of them were found as an array broken down by commands
+int* findCommands(string line)
 {
-	int commandCount = 0;
-
+	int commands[3]{};//storing the amount of if/for/while
 	//get rid of all strings inside line as they can contain fake if/while/for commands
 	int position = line.find('"');
 	while (position != -1)
@@ -39,28 +46,45 @@ int findCommands(string line)
 		line.erase(position, line.find('"', position + 1) - position + 1);
 		position = line.find('"');
 	}
-
-	//turn the line into a stream to read it by a split character(;)
-	stringstream lineStream(line);
-	string segment;//split piece of the line
 	//separate the line into pieces that end in semicolons
 	//program can have an if/while/for at the end of a line and still be valid
 	//since a line can contain an entire definition of if/while/for
 	//they will end in either a semicolon or a closing brace '}'
 	//replace all closing braces with semicolons for easier splitting
 	replace(line.begin(), line.end(), '}', ';');
+	replace(line.begin(), line.end(), ')', ';');
+	//get rid of all opening braces as they can be attached to the commands on a new line
+	replace(line.begin(), line.end(), '{', ' ');
+	replace(line.begin(), line.end(), '(', ' ');
+
+	//turn the line into a stream to read it by a split character(;)
+	stringstream lineStream(line);
+	string segment;//split piece of the line
 
 	while (getline(lineStream, segment, ';'))
 	{
 		segment = trimStart(segment);//get rid of leading spaces
+
+		//if a piece starts with an else, remove it to check for "if" that can come after it
+		if (segment.rfind("else", 0) == 0) {
+			segment.erase(0, 4);
+			segment = trimStart(segment);//there might be leading spaces after removal
+		}
+
 		//check if each piece starts with if/for/while
 		//as at this point it is guaranteed to start with those if they exist
-		//else if is checked as well because it contains a valid if command(else on it's own is not an if command)
-		if (segment.rfind("if", 0) == 0 || segment.rfind("else if", 0) == 0 || segment.rfind("for", 0) == 0 || segment.rfind("while", 0) == 0)
-			commandCount++;
+		if (segment.rfind("if", 0) == 0) {
+			commands[command_if]++;
+		}
+		else if (segment.rfind("for", 0) == 0) {
+			commands[command_for]++;
+		}
+		else if (segment.rfind("while", 0) == 0) {
+			commands[command_while]++;
+		}
 	}
 
-	return commandCount;
+	return commands;
 }
 
 int main() {
@@ -70,19 +94,31 @@ int main() {
 
 	//file containing the code
 	fstream codeFile(fileName, ios::in);
-	//buffer for storing lines from file
-	string codeLine = "";
-	int commandCount = 0;
-	//loop until the entire file is read, line by line
-	while (getline(codeFile, codeLine))
-	{
-		commandCount += findCommands(codeLine);
+
+	if (codeFile.is_open()) {
+		//buffer for storing lines from file
+		string codeLine = "";
+		int* commands;
+		int commandCount[3]{};
+		//loop until the entire file is read, line by line
+		while (getline(codeFile, codeLine))
+		{
+			commands = findCommands(codeLine);
+			commandCount[command_if] += commands[command_if];
+			commandCount[command_for] += commands[command_for];
+			commandCount[command_while] += commands[command_while];
+		}
+
+		//close file since reading has finished
+		codeFile.close();
+
+		cout << "Total number of if commands is: " << commandCount[command_if] << endl;
+		cout << "Total number of for commands is: " << commandCount[command_for] << endl;
+		cout << "Total number of while commands is: " << commandCount[command_while] << endl;
 	}
-
-	//close file since reading has finished
-	codeFile.close();
-
-	cout << "Total number of if/for/while commands is: " << commandCount<<endl;
+	else {
+		cout << "Unable to open file" << endl;
+	}
 
 	return 0;
 }

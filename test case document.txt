@@ -6,16 +6,47 @@ Assumptions:
 - else is not an if command, 'else if' IS an if command
 - given c++ code is valid, all checks assume code is already valid c++ code
 - files are placed in the same directory as the program.
+- program does not need to repeat, as mentioned in lecture
 
 
 Given input file name: codefile.txt
 
-Output: Total number of if/for/while commands is: 7
+Output: 
+Total number of if commands is: 1
+Total number of for commands is: 3
+Total number of while commands is: 3
+
+*************************************
+
+Given input file name: codefile1.txt
+
+Output:
+
+Unable to open file
+
+*************************************
 
 Given input file name: codefile2.txt
 
-Output: Total number of if/for/while commands is: 3
+Output: 
+Total number of if commands is: 1
+Total number of for commands is: 1
+Total number of while commands is: 1
+
+*************************************
 
 Given input file name: codefile3.txt
 
-Output: Total number of if/for/while commands is: 21
+Output:
+Total number of if commands is: 16
+Total number of for commands is: 4
+Total number of while commands is: 1
+
+*************************************
+
+Given input file name: codefile4.txt
+
+Output:
+Total number of if commands is: 1
+Total number of for commands is: 3
+Total number of while commands is: 3

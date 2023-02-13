@@ -1,7 +1,7 @@
 #include<fstream>
 #include<iostream>
 #include<string>
-#include<sstream>  
+#include<sstream>
 #include <algorithm>
 using namespace std;
 
@@ -35,10 +35,9 @@ string trimStart(string s)
 }
 
 //find the amount of commands(if/while/for) exist in a given string
-//returns how many of them were found as an array broken down by commands
-int* findCommands(string line)
+//returns how many of them were found as function parameters
+void findCommands(string line, int& ifs, int& fors, int& whiles)
 {
-	int commands[3]{};//storing the amount of if/for/while
 	//get rid of all strings inside line as they can contain fake if/while/for commands
 	int position = line.find('"');
 	while (position != -1)
@@ -74,39 +73,32 @@ int* findCommands(string line)
 		//check if each piece starts with if/for/while
 		//as at this point it is guaranteed to start with those if they exist
 		if (segment.rfind("if", 0) == 0) {
-			commands[command_if]++;
+			ifs++;
 		}
 		else if (segment.rfind("for", 0) == 0) {
-			commands[command_for]++;
+			fors++;
 		}
 		else if (segment.rfind("while", 0) == 0) {
-			commands[command_while]++;
+			whiles++;
 		}
 	}
-
-	return commands;
 }
 
 int main() {
 	cout << "Enter file name: ";
 	string fileName;
 	cin >> fileName;
-
 	//file containing the code
 	fstream codeFile(fileName, ios::in);
 
 	if (codeFile.is_open()) {
 		//buffer for storing lines from file
 		string codeLine = "";
-		int* commands;
 		int commandCount[3]{};
 		//loop until the entire file is read, line by line
 		while (getline(codeFile, codeLine))
 		{
-			commands = findCommands(codeLine);
-			commandCount[command_if] += commands[command_if];
-			commandCount[command_for] += commands[command_for];
-			commandCount[command_while] += commands[command_while];
+			findCommands(codeLine, commandCount[command_if], commandCount[command_for], commandCount[command_while]);
 		}
 
 		//close file since reading has finished
